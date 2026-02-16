@@ -2,7 +2,7 @@
 
 ## About
 Research investigating whether MBTI personality types influence academic performance 
-in Software Architecture courses. A study analyzing 102 students from PUCPR's Software 
+in Software Architecture courses. A study analyzing 102 students from Software 
 Architecture discipline.
 
 ## Research Question
