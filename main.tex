@@ -1,0 +1,574 @@
+\documentclass[sigconf]{acmart}
+% documentclass[sigconf,anonymous]{acmart}
+
+% SBES 2026 (Trilha de Educação) -- ACM SigConf (2-col) + requisitos de submissão
+\setcopyright{none}
+\settopmatter{printccs=false}
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+
+% Opcional: melhora espaçamento em tabelas longas
+\setlength\tabcolsep{5pt}
+
+\begin{document}
+
+\title{Does MBTI Matter in Software Architecture Education?}
+
+
+\author{Manoel Valerio da Silveira Neto}
+\orcid{-0003-0470-5350}
+\affiliation{
+  \institution{Graduate Program in Informatics (PPGIa), Pontifical Catholic University of Paran\'a (PUCPR)}
+  \city{Curitiba}
+  \state{PR}
+  \country{Brazil}
+}
+
+
+\author{Andreia Malucelli}
+\orcid{-0002-0929-1874}
+\affiliation{
+  \institution{Graduate Program in Informatics (PPGIa), Pontifical Catholic University of Paran\'a (PUCPR)}
+  \city{Curitiba}
+  \state{PR}
+  \country{Brazil}
+}
+
+\author{Sheila Reinehr}
+\orcid{-0001-9430-7713}
+\affiliation{
+  \institution{Graduate Program in Informatics (PPGIa), Pontifical Catholic University of Paran\'a (PUCPR)}
+  \city{Curitiba}
+  \state{PR}
+  \country{Brazil}
+}
+
+% --- SBES metadata (replace placeholders with the real info) ---
+\acmConference[SBES '26]{Brazilian Symposium on Software Engineering (SBES)}
+{<Month> <DD>--<DD>, 2026}{<City>, <State>, Brazil}
+
+\acmBooktitle{Proceedings of the Brazilian Symposium on Software Engineering (SBES '26),
+<Month> <DD>--<DD>, 2026, <City>, <State>, Brazil}
+
+\acmYear{2026}
+
+\begin{abstract}
+ Este trabalho investiga a relação entre perfis de personalidade e desempenho acadêmico em uma disciplina de Arquitetura de Software. Analisamos um dataset com 102 respostas de estudantes, contendo perfil MBTI e notas ( trabalhos em equipe, prova individual e nota final). Reportamos estatísticas descritivas da distribuição de perfis e do desempenho, além de comparações entre grupos e associações entre variáveis (por exemplo, diferenças de notas por perfil e correlações entre componentes de avaliação e nota final). Os resultados contribuem com evidência empírica inicial para discutir como características individuais podem se relacionar com desempenho em avaliações típicas de uma disciplina de Arquitetura de Software, levantando implicações para desenho instrucional e acompanhamento acadêmico.
+\end{abstract}
+
+\keywords{Educação em Engenharia de Software, Educação em Arquitetura de Software, Personalidade, MBTI, Desempenho Acadêmico}
+
+\maketitle
+
+\section{Introdução}
+Arquitetura de Software (AS) é um tópico central em currículos de Engenharia de Software e exerce papel determinante na capacidade de projetar sistemas que atendam a restrições de qualidade, evolução e operação. Entretanto, ensinar AS é desafiador, pois o raciocínio arquitetural é fortemente dependente de contexto e envolve lidar com múltiplos atributos de qualidade e seus inevitáveis \textit{trade-offs} \cite{7883320}. Além disso, a literatura reporta, de forma recorrente, a existência de um \emph{gap} entre o que é ensinado na academia e as necessidades práticas da indústria em Engenharia de Software \cite{8664487}. Em AS, esse \emph{gap} pode se manifestar como domínio conceitual sem a mesma confiança ou prontidão para aplicar tais conceitos em cenários realistas (por exemplo, tomada de decisão arquitetural sob restrições, documentação, e análise de alternativas). Além disso, evidências recentes de experiências em cursos de graduação indicam que o uso de \emph{casos reais} em atividades de aprendizagem pode ser particularmente efetivo em Arquitetura de Software, ao motivar e engajar estudantes e ao conectá-los a cenários mais realistas, fortalecendo o vínculo entre conceitos e fatos do mundo real \cite{11299405}.
+
+Em paralelo, o desenvolvimento de software e o aprendizado de seus fundamentos são atividades humanas e, portanto, fatores individuais podem influenciar resultados. A literatura de fatores humanos em Engenharia de Software reforça que características cognitivas e comportamentais afetam a forma como profissionais e estudantes aprendem, colaboram e executam tarefas \cite{10.1145/3474624.3474625}. Assim, investigar variáveis individuais pode contribuir para compreender diferenças de desempenho acadêmico em disciplinas complexas e contextuais como AS, apoiando intervenções pedagógicas e acompanhamento acadêmico.
+
+Neste artigo, investigamos empiricamente a relação entre perfis de personalidade e desempenho acadêmico em uma disciplina de Arquitetura de Software. O estudo analisa um conjunto de 102 respostas de estudantes contendo turma, ano, gênero, perfil MBTI (tipo de quatro letras, por exemplo, ISTJ) e notas (trabalhos em equipe, prova individual e nota final). O objetivo é caracterizar a distribuição de perfis e avaliar se há diferenças de desempenho entre grupos, contribuindo com evidências iniciais para discutir como características individuais podem se relacionar com desempenho em avaliações típicas de uma disciplina de AS. Neste estudo, o perfil de personalidade é autorrelatado via site 16Personalities (tipologia inspirada no MBTI), não correspondendo ao instrumento oficial do MBTI.
+
+Além disso, experiências reportadas na literatura indicam que ensinar e aprender Arquitetura de Software permanece desafiador em diferentes níveis e contextos.
+Uma síntese recente aponta razões recorrentes, como lacuna entre disciplinas de baixo nível e a necessidade de projetar sistemas efetivos, a dificuldade dos estudantes em lidar com problemas sem uma única melhor solução, e a complexidade do processo decisório arquitetural, que envolve múltiplos aspectos e numerosas decisões ao longo do desenvolvimento \cite{oliveira2022overviewSAEdu}.
+
+\section{Questões de Pesquisa}
+Este estudo responde às seguintes questões de pesquisa (RQs):
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item \textbf{RQ1}: Qual é a distribuição de perfis MBTI entre estudantes da disciplina?
+  \item \textbf{RQ2}: Como o desempenho acadêmico varia entre perfis MBTI (tipo e grupos)?
+\end{itemize}
+
+\section{Tipos de Personalidade}
+O Indicador de Tipos de Myers--Briggs (Myers--Briggs Type Indicator -- MBTI) \cite{Myers1988} é um instrumento amplamente utilizado para caracterizar preferências individuais relacionadas à percepção e tomada de decisão. O MBTI define 16 tipos que resultam da combinação de quatro pares de preferências: Extroversão (E) vs. Introversão (I), Sensação/Sensoriamento (S) vs. Intuição (N), Pensamento (\textit{Thinking}, T) vs. Sentimento (\textit{Feeling}, F) e Julgamento (\textit{Judging}, J) vs. Percepção (\textit{Perceiving}, P). O primeiro par (E--I) descreve a orientação predominante de atenção (para o ambiente externo ou interno); o segundo (S--N) descreve como informações são recebidas (fatos concretos ou padrões/possibilidades); o terceiro (T--F) descreve o estilo predominante de decisão (critérios lógicos/impessoais ou valores/impacto humano); e o quarto (J--P) descreve a preferência por estrutura/planejamento ou flexibilidade/adaptação \cite{Myers1988}.
+
+No contexto deste estudo, adotamos o teste disponibilizado pelo site 16Personalities\cite{SixteenPersonalitiesRoles}, que operacionaliza os 16 tipos do MBTI (tipo de quatro letras, por exemplo, ISTJ) e os organiza em quatro grupos (\textit{roles}): \emph{Analysts}, \emph{Diplomats}, \emph{Sentinels} e \emph{Explorers}, coforme Figura \ref{fig:mbti_eng}. Assim, consideramos o MBTI em duas granularidades: (i) tipo de quatro letras (por exemplo, ISTJ) e (ii) grupos (Analysts/Diplomats/Sentinels/Explorers), conforme a taxonomia apresentada pelo instrumento.
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[scale=0.65,angle=0 ]{mbti_eng.png}
+    \caption{MBTI Types e Roles. Fonte: 16Personalities}
+    \label{fig:mbti_eng}
+\end{figure}
+
+Embora a plataforma \emph{16Personalities} organize os 16 tipos em quatro \emph{roles} (Analysts, Diplomats, Sentinels e Explorers), esses agrupamentos não fazem parte da formulação clássica do MBTI \cite{Myers1988,SixteenPersonalitiesRoles}. Neste estudo, tratamos esses rótulos como uma camada de agregação \emph{operacional} do instrumento utilizado, útil para reduzir a esparsidade e aumentar a estabilidade estatística quando há muitos tipos com baixa frequência. Essa opção é coerente com taxonomias de temperamentos difundidas na literatura derivada da tipologia junguiana, como a proposta de Keirsey, que combina preferências em quatro macrocategorias (por exemplo, NT, NF, SJ e SP) para viabilizar análises em nível mais alto \cite{Keirsey1998}. Ainda assim, por se tratar de uma categorização adicional do instrumento e por existirem debates sobre propriedades psicométricas do MBTI, sobretudo quanto à dicotomização e à conversão de escores contínuos em categorias nominais, interpretamos resultados por \emph{roles} como descritivos e exploratórios, complementando-os com análises por dimensões (E/I, S/N, T/F, J/P) e enfatizando cautela inferencial \cite{Pittenger2005,Randall2017}.
+
+Na análise, também decompomos o MBTI em suas dimensões (E/I, S/N, T/F, J/P), pois essa decomposição reduz a esparsidade (quando há muitos tipos com poucos participantes) e permite comparar grupos binários de forma mais robusta. Essa estratégia é consistente com trabalhos que analisam MBTI em Engenharia de Software tanto no nível de tipos quanto no nível de traços/dimensões \cite{Capretz2010,Personalitytypesinsoftwareengineering}.
+
+\section{Trabalhos Relacionados}
+A literatura de Educação em Engenharia de Software discute amplamente o desalinhamento entre formação acadêmica e necessidades práticas da indústria. Garousi et al.~\cite{8664487} sintetizam evidências dessa lacuna e descrevem estratégias recorrentes para mitigá-lo, como aprendizagem baseada em projetos, aproximação com problemas reais e colaboração com a indústria. Em Arquitetura de Software, esse desafio se intensifica porque o raciocínio arquitetural é fortemente dependente de contexto, envolve múltiplos atributos de qualidade e seus trade-offs, e frequentemente é ensinado com projetos acadêmicos de pequena escala que não reproduzem restrições reais \cite{7883320}. Visões gerais e trabalhos clássicos discutem desenho instrucional e abordagens para apoiar a transferência teoria--prática em AS \cite{oliveira2022overviewSAEdu,lago2005teachingSA,10.1007/3-540-55963-9_38}, incluindo cursos colaborativos com sistemas open source em escala real e atividades explicitamente orientadas a decisões e documentação arquitetural \cite{vandeursen2017collaborativeSA,angelov2017agileSAEdu,oliveira2022casebasedSAEdu,pantoja2024trainingSAIndustry}.
+
+Além das estratégias pedagógicas, fatores humanos são discutidos como relevantes em Engenharia de Software. Revisões na área indicam que características cognitivas e comportamentais podem influenciar colaboração, tomada de decisão e resultados em tarefas de desenvolvimento \cite{10.1145/3474624.3474625}. No recorte de personalidade, estudos baseados em MBTI reportam distribuições de perfis em contextos de Engenharia de Software e discutem potenciais relações entre preferências individuais e atividades do ciclo de vida \cite{Capretz2010,Personalitytypesinsoftwareengineering}. Em contexto educacional, há evidências de associação entre dimensões de personalidade e desempenho em tarefas de programação e aprendizagem, sugerindo que investigar personalidade em ambientes de ensino pode produzir insights para acompanhamento acadêmico e desenho de atividades \cite{Li2018}.
+
+Apesar dessas evidências, ainda há espaço para estudos observacionais que conectem perfis de personalidade, obtidos por instrumentos amplamente utilizados, ao desempenho em disciplinas específicas e contextuais como Arquitetura de Software, considerando componentes de avaliação típicos (trabalhos incrementais e provas). Este trabalho contribui nesse espaço ao analisar a relação entre perfis MBTI (tipo e grupos conforme o instrumento utilizado) e desempenho acadêmico em uma disciplina de AS.
+
+~\citet{4812696} argumentam que o projeto arquitetural é um problema complexo (wicked problem), no qual não há formulação definitiva, não existe critério objetivo de término e as soluções raramente são certas ou erradas, mas sim melhores ou piores conforme \textit{trade-offs} entre preocupações de stakeholders. Como consequência, os autores defendem metodologias educacionais que superem o modelo tradicional de aula expositiva, propondo um \textit{Community of Learners} no qual estudantes atuam como parceiros na construção do conhecimento. No formato reportado, grupos assumem papéis de \textit{arquitetos} e \textit{stakeholders} e evoluem soluções para um sistema grande e realista por meio de ciclos, combinando teoria e prática com reflexão orientada por feedback. Esse enquadramento reforça a adequação de abordagens como PJBL para AS, especialmente quando o curso envolve decisões arquiteturais explícitas, documentação e avaliação de qualidade.
+
+~\citet{11299405} apresentam um relato de experiência com quatro experiências em cursos de graduação (duas universidades, mais de 400 estudantes), discutindo como \emph{casos reais} podem ser empregados para apoiar o ensino de Arquitetura de Software. Os autores descrevem diferentes desenhos de aplicação: (i) estudantes analisando um caso de forma ativa e relativamente autônoma; (ii) caso apresentado pelo docente durante a aula, com discussão guiada; e (iii) uso de múltiplos casos ao longo de todo o curso, inclusive com seleção de casos pelos próprios estudantes. Em geral, o feedback obtido sugere que os casos são bem aceitos e úteis para aproximar teoria e prática, embora impliquem esforço adicional e exijam curadoria (tamanho/complexidade, disponibilidade de material e terminologia).
+
+\section{Método}
+\citet{SWEBOKv4_2025} (SWEBOK Guide v4.0a) caracteriza Arquitetura de Software como uma área de conhecimento própria, envolvendo fundamentos, descrição (p.ex., \textit{views} e \textit{viewpoints}), processos de análise, síntese, avaliação e práticas de avaliação (p.ex., ATAM/SAAM/QAW). Essa caracterização sugere que competência arquitetural combina conhecimento conceitual e aplicação em tarefas de análise e documentação, frequentemente orientadas por atributos de qualidade e \textit{trade-offs}. No contexto desta disciplina, tais competências foram avaliadas por meio de TDEs (trabalhos em equipe) e prova individual, cujas notas compõem a nota final analisada neste estudo.
+
+Este estudo adota um desenho observacional com análise quantitativa, baseado em dados coletados no contexto de uma disciplina regular. Seguindo a abordagem Goal--Question--Metric (GQM), o objetivo deste estudo é \textbf{analisar} a relação entre perfis de personalidade (MBTI) e desempenho acadêmico, \textbf{com o propósito de} investigar diferenças de desempenho entre grupos de personalidade, \textbf{com respeito a} notas em trabalhos em equipe, prova individual e nota final, \textbf{do ponto de vista de} estudantes de uma disciplina de Arquitetura de Software, \textbf{no contexto de} uma disciplina regular (turmas e anos distintos), com avaliações alinhadas ao plano de ensino.
+
+\subsection{Hipóteses}
+Para investigar se o desempenho acadêmico varia entre perfis de personalidade, formulamos hipóteses estatísticas considerando as comparações entre categorias do MBTI nas seguintes granularidades: (i) \textit{tipo} (quatro letras), (ii) \textit{grupos} do instrumento (Analysts/Diplomats/Sentinels/Explorers) e (iii) \textit{dimensões} (E/I, S/N, T/F, J/P). Os desfechos analisados incluem as notas dos componentes avaliativos e medidas agregadas derivadas no dataset: \textit{Requisitos de Arquitetura} (derivado de TDE1 e TDE2), \textit{Desenvolvimento do Sistema} (TDE3), \textit{MEDIA TDE}, \textit{PROVA OBJETIVA E AUTORIA} e \textit{NOTA FINAL GERAL}. A hipótese nula assume que as distribuições desses desfechos são equivalentes entre os perfis de personalidade comparados; a hipótese alternativa assume que ao menos uma dessas distribuições difere entre os grupos.
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item \textbf{H0}: As distribuições de desempenho acadêmico (\textit{Requisitos de Arquitetura}, \textit{Desenvolvimento do Sistema}, \textit{MEDIA TDE}, \textit{PROVA OBJETIVA E AUTORIA} e \textit{NOTA FINAL GERAL}) não diferem de forma estatisticamente significativa entre estudantes com diferentes perfis de personalidade, considerando o MBTI no nível de \textit{tipo}, \textit{dimensões} e/ou \textit{grupos}.
+  \item \textbf{H1}: Pelo menos uma das distribuições de desempenho acadêmico (\textit{Requisitos de Arquitetura}, \textit{Desenvolvimento do Sistema}, \textit{MEDIA TDE}, \textit{PROVA OBJETIVA E AUTORIA} e \textit{NOTA FINAL GERAL}) difere de forma estatisticamente significativa entre estudantes com diferentes perfis de personalidade, considerando o MBTI no nível de \textit{tipo}, \textit{dimensões} e/ou \textit{grupos}.
+\end{itemize}
+
+Como variáveis de controle e/ou estratificação, consideramos \textbf{turma}, \textbf{ano} e \textbf{gênero}, examinando sua associação tanto com o perfil MBTI quanto com os desfechos de desempenho. Dada a esparsidade em alguns tipos (baixa frequência por categoria), priorizamos comparações mais robustas por meio de (i) agregação em \textit{grupos} e (ii) decomposição do MBTI em \textit{dimensões} (E/I, S/N, T/F, J/P), reduzindo esparsidade e aumentando a estabilidade estatística.
+
+\subsection{Contexto da Disciplina e Alinhamento Construtivo}
+A disciplina foi desenhada com base em Project-Based Learning (PjBL), combinando aulas expositivas dialogadas com um projeto incremental e checkpoints (TDE1, TDE2 e TDE3).
+Em PjBL, os estudantes aprendem ao investigar e construir soluções para problemas significativos, produzindo artefatos avaliáveis (por exemplo, documentação e decisões arquiteturais) com orientação e feedback frequentes; revisões e estudos clássicos descrevem PjBL como uma estratégia efetiva quando há intencionalidade pedagógica, \textit{scaffolding} e alinhamento entre objetivos, atividades e avaliação \cite{blumenfeld1991,kokotsaki2016,helle2006,bell2010}.
+Ao final do PJBL, as equipes entregaram uma aplicação completa implantada em nuvem e publicaram a documentação arquitetural correspondente (arc42 e C4 Model) como parte dos entregáveis do projeto.
+
+Durante a implementação, o uso de IA generativa foi permitido e recomendado como apoio à programação (por exemplo, GitHub Copilot), especialmente para tarefas repetitivas e \textit{boilerplate}, mantendo-se a responsabilidade das equipes pela compreensão, revisão e qualidade do código entregue (onde na prova final individual o aluno teve que explicar o código fonte, e demais artefatos de gerados de forma de autoria).
+
+\paragraph{Aplicativo de referência (eShopOnContainers).}: Como suporte ao desenho arquitetural e à discussão de estilos/padrões em cenários realistas, utilizamos o aplicativo de referência \emph{eShopOnContainers}\footnote{\url{https://learn.microsoft.com/pt-br/dotnet/architecture/cloud-native/introduce-eshoponcontainers-reference-app}}, um exemplo cloud-native baseado em microserviços. O artefato foi usado para ilustrar decomposição em serviços, API Gateway/BFF, persistência por serviço e integração assíncrona via barramento de eventos, conectando requisitos não funcionais (por exemplo, escalabilidade, disponibilidade e observabilidade) a decisões arquiteturais.
+
+As Tabelas~\ref{tab:plano-ensino-aprendizagem} e ~\ref{tab:cronograma} explicitam o alinhamento construtivo da disciplina, conectando resultados de aprendizagem (RA), avaliações e evidências (artefatos/entregáveis) às estratégias didáticas (PJBL e aulas expositivas dialogadas) e ao cronograma. Essas evidências descrevem o que foi ensinado e quais atividades suportaram a aprendizagem, permitindo interpretar as percepções do survey (por exemplo, itens sobre preparo e aplicação em nuvem) à luz dos conteúdos e práticas efetivamente realizados ao longo do semestre.
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Cronograma de atividades: temas de estudo (TE), atividades pedagógicas (incluindo PJBL).}
+\label{tab:cronograma}
+\begin{tabular}{ll}
+\toprule
+\textbf{TE} & \textbf{Tema/Atividade} \\
+\midrule
+TE1 & Introdução à Arquitetura de Software e Soluções.  \\
+TE3 & Documentação para Arquitetura. \\
+TE2 & Fundamentos de Computação em Nuvem.  \\
+TE2 & Serverless, Cloud Computing e Cloud Native.  \\
+TE4 & Microfrontend  \\
+TE4 & Produtividade em Arquitetura de Software com IA. \\
+TE3/TE4 & Backend to Frontend (BFF) + Microservices \\
+TE3/TE4 & Database per Service + CQRS \\
+TE3/TE4 & Arquitetura Orientada a Eventos (EDA).  \\
+TE3/TE4 & API Gateway \\
+TE3/TE4 & Clean Architecture / Vertical Slice. \\
+TE3/TE4 & Avaliação da Qualidade de Arquitetura de Software (ATAM). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A disciplina de Arquitetura de Soluções com Cloud foi conduzida com metodologia PjBL, com aulas expositivas dialogadas e uma sequência de atividades práticas incrementais. O plano de ensino estruturou o conteúdo em seis Temas de Estudo (TE1\--TE6) e três Resultados de Aprendizagem (RA1\--RA3), com avaliações explicitamente alinhadas aos resultados. Temas de Estudo (TE): TE1: Conceitos de Arquitetura de Software; TE2: Arquitetura de TI (infraestrutura de nuvem, on-premises e híbrida); TE3: Documentação de Arquitetura; TE4: Padrões e Estilos Arquiteturais; TE5: Projeto de Arquitetura de Software; TE6: Qualidade para Arquitetura de Software. Resultados de Aprendizagem (RA), RA1: Analisar padrões arquiteturais modernos, identificando seu uso em contextos reais; RA2: Desenvolver arquiteturas preliminares para um sistema complexo; RA3: Avaliar arquiteturas propostas e selecionar a alternativa que melhor atende aos requisitos de qualidade de um sistema complexo.
+
+Atividades e evidências de aprendizagem (artefatos/entregáveis). Ao longo do semestre, os estudantes realizaram atividades práticas e avaliações somativas alinhadas aos RAs, incluindo: (i) workshops PjBL de arquitetura e desenvolvimento; e (ii) prova individual. No cronograma, os conteúdos práticos incluíram fundamentos de computação em nuvem, serverless e cloud-native, microfrontend, BFF + microservices + database per service, API gateway + EDA, Clean Architecture/Vertical Slice e avaliação de qualidade arquitetural via ATAM. Esses conteúdos compõem a base do que foi ensinado e do tipo de aplicação prática esperada dos estudantes.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Relação entre plano de ensino (TE/RA), avaliações e evidências de aprendizagem (artefatos/atividades).}
+\label{tab:plano-ensino-aprendizagem}
+\begin{tabularx}{\textwidth}{@{}lXlX@{}}
+\toprule
+\textbf{Elemento} & \textbf{Descrição} & \textbf{Avaliação} & \textbf{Evidência de aprendizagem (exemplos)} \\
+\midrule
+TE1--TE2 & Fundamentos de AS e contexto de arquitetura de TI/Cloud & Prova & Conceitos aplicados em decisões iniciais e justificativas (trade-offs) \\
+TE3 & Documentação arquitetural & Prova + Workshops PJBL & Produção/uso de documentação arquitetural (p.ex., visões, decisões, diagramas) \\
+TE4 & Padrões/estilos arquiteturais & Prova + Workshops PJBL & Identificação e uso de padrões/estilos em contexto \\
+TE5 & Projeto de Arquitetura de Software & Prova + Workshops PJBL & Arquiteturas preliminares para sistema complexo (alternativas) \\
+TE6 & Qualidade em AS (trade-offs, avaliação) & Prova + Workshops PJBL &  Avaliação e seleção de arquitetura com foco em requisitos de qualidade (p.ex., ATAM) \\
+\midrule
+RA1 & Analisar padrões arquiteturais em contextos reais & Prova + Workshops PJBL & Aplicação de padrões/estilos e justificativas \\
+RA2 & Desenvolver arquiteturas preliminares & Prova + Workshops PJBL & Propostas arquiteturais (alternativas) e documentação associada \\
+RA3 & Avaliar e selecionar arquitetura & Prova + Workshops PJBL& Avaliação baseada em atributos de qualidade e escolha justificada \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Stack tecnológico e ferramentas utilizadas: Para aproximar as atividades de cenários típicos do mercado, o projeto incremental adotou um stack cloud-native e práticas de \textit{architecture-as-code}. O \textbf{frontend} foi desenvolvido em \textbf{React}, com apoio de IA (\textbf{GitHub Copilot}) para acelerar tarefas de implementação, e publicado via \textbf{Azure Static Web Apps}. Os \textbf{microserviços} foram containerizados e publicados no \textbf{Docker Hub}, com implantação em \textbf{Azure Container Apps}; a \textbf{linguagem de desenvolvimento do backend} (e respectivos frameworks) foi escolhida livremente pelos estudantes, de acordo com as necessidades do projeto e preferências da equipe. Para \textbf{integração e exposição de APIs}, utilizou-se \textbf{Amazon API Gateway} como API Gateway. Em atividades de \textbf{serverless}, as equipes empregaram \textbf{Azure Functions}.
+
+A documentação arquitetural foi produzida seguindo \textbf{arc42} e o \textbf{C4 Model}, utilizando \textbf{Markdown} e diagramas em \textbf{Mermaid}.
+Para \textbf{diagramas como código} (\textit{diagrams-as-code}), além de Mermaid, também foi adotado \textbf{PlantUML}. Por fim, foram explorados \textbf{testes unitários de arquitetura} com \textbf{ArchUnit}, reforçando a verificação automatizada de restrições arquiteturais definidas pelas equipes.
+
+\section{Instrumento}
+\subsection{Instrumento e Variáveis}
+O instrumento coletou variáveis demográficas e acadêmicas. No eixo demográfico, registrou-se \textbf{turma} (A ou B), \textbf{ano} (2024 ou 2025) e \textbf{gênero} (M ou F), todas tratadas como variáveis categóricas (turma e gênero como nominais; ano como ordinal). No eixo de personalidade, coletou-se o \textbf{tipo MBTI} no formato de quatro letras (por exemplo, ISTJ), além do \textbf{grupo} correspondente na taxonomia do instrumento (Analistas, Diplomatas, Sentinelas e Exploradores) e do \textbf{perfil} nominal reportado pela plataforma (por exemplo, \emph{Arquiteto}, \emph{Lógico} e \emph{Comandante}), todos modelados como variáveis categóricas nominais. Para desempenho acadêmico, foram consideradas notas numéricas contínuas na escala 0--10 dos trabalhos \textbf{TDE1} e \textbf{TDE2} (ambos relacionados a \textit{Requisitos de Arquitetura}) e do \textbf{TDE3} (relacionado a \textit{Desenvolvimento do Sistema}), bem como a nota da \textbf{Prova (Objetiva e Autoria)}. A partir dessas medidas, o dataset incluiu variáveis derivadas: \textbf{Requisitos de Arquitetura} (0--10, agregada a partir de TDE1 e TDE2), \textbf{Desenvolvimento do Sistema} (0--10, equivalente ao TDE3), \textbf{MEDIA TDE} (0--10), \textbf{TDE 40\%} (0--4, calculada como $0{,}4 \times$ \textit{MEDIA TDE}), \textbf{PROVA 60\%} (0--6, calculada como $0{,}6 \times$ \textit{PROVA}) e a \textbf{NOTA FINAL GERAL} (0--10), definida como a soma \textit{TDE 40\% + PROVA 60\%}. Para as análises, o MBTI foi considerado em duas granularidades: (a) o tipo de quatro letras (por exemplo, ISTJ) e (b) a agregação por grupos do instrumento (Analysts/Diplomats/Sentinels/Explorers). O perfil de personalidade foi obtido por autorrelato dos estudantes a partir do teste do \emph{16Personalities} e informado em um formulário Google Forms juntamente com turma, ano e gênero; embora o formulário também tenha coletado nome para fins administrativos, identificadores foram removidos no dataset analítico. As notas (TDE1, TDE2, TDE3, prova e nota final) foram recuperadas pelo professor ao final do semestre, antes do período de recuperação. Na disciplina, estudantes com nota final $\geq 7{,}0$ são aprovados, com nota final $< 4{,}0$ são reprovados e, no intervalo $[4{,}0,7{,}0)$, realizam recuperação; este trabalho não considera as notas obtidas na recuperação, nem avalia o desfecho final (aprovação/reprovação) dos estudantes que realizaram recuperação.
+
+\subsection{Preparação dos Dados}
+Antes da análise, realizamos: (i) verificação de consistência, faixas de notas e valores ausentes; (ii) padronização do campo MBTI para separar o tipo (4 letras) e derivar as dimensões (E/I, S/N, T/F, J/P) e o grupo do instrumento; e (iii) detecção de \textbf{registros duplicados}. Como o formulário poderia gerar submissões repetidas (por exemplo, reenvio pelo estudante), identificamos duplicatas exatas por todas as colunas analíticas e mantivemos apenas uma ocorrência por registro, removendo duplicatas antes de calcular estatísticas e executar testes. O tamanho amostral reportado nas tabelas e testes refere-se ao dataset após essa limpeza.
+
+\subsection{Análise}
+Realizamos análises descritivas e inferenciais para responder às RQs. Inicialmente, caracterizamos a amostra por ano, turma, gênero e distribuição de MBTI em três granularidades: (i) tipo de quatro letras, (ii) grupos MBTI e (iii) dimensões (E/I, S/N, T/F, J/P), reduzindo esparsidade em subgrupos.
+
+Para variáveis de desempenho (\textit{Requisitos de Arquitetura}, \textit{Desenvolvimento do Sistema}, \textit{MEDIA TDE}, \textit{PROVA OBJETIVA E AUTORIA} e \textit{NOTA FINAL GERAL}), inspecionamos distribuições por histogramas/boxplots e avaliamos normalidade (Shapiro--Wilk e inspeção visual por Q--Q plots). Dada a presença de assimetrias, efeitos de teto (em \textit{Requisitos}) e subgrupos pequenos, priorizamos testes não paramétricos para comparações entre múltiplos grupos: Kruskal--Wallis para (a) grupos MBTI e (b) tipos MBTI quando $n$ por grupo foi suficiente. Quando o teste global indicou diferença, aplicamos pós-teste por comparações pareadas (Mann--Whitney) com correção de Holm--Bonferroni.
+
+Além disso, consideramos \textbf{turma}, \textbf{ano} e \textbf{gênero} como variáveis contextuais na descrição da amostra e na discussão dos achados. Dada a esparsidade em alguns tipos (baixa frequência por categoria), priorizamos comparações mais robustas por meio de (i) agregação em \textit{grupos} e (ii) decomposição do MBTI em \textit{dimensões} (E/I, S/N, T/F, J/P), reduzindo esparsidade e aumentando a estabilidade estatística.
+
+\section{Resultados}
+\label{sec:results}
+
+\subsection{Caracterização da amostra e distribuição de perfis (RQ1)}
+As turmas analisadas refletem a oferta da disciplina em dois anos consecutivos (2024 e 2025), cada uma com duas turmas (A e B). Considerando os respondentes do instrumento, observa-se maior participação em 2025 do que em 2024, com distribuição relativamente equilibrada entre as turmas A e B em ambos os anos (Tabela~\ref{tab:ano-turma}). Essa assimetria entre anos é relevante para interpretação, pois pode refletir efeitos de coorte e variações operacionais entre ofertas.
+
+Quanto à \textbf{distribuição de perfis MBTI} (RQ1), no conjunto de 102 respondentes observou-se predominância dos grupos \textit{Analistas} ($n=43$) e \textit{Diplomatas} ($n=32$), seguidos por \textit{Sentinelas} ($n=15$) e \textit{Exploradores} ($n=12$). Considerando os 16 tipos (quatro letras), 15 perfis estiveram presentes na amostra; o único tipo ausente foi \textit{ESFP}. Essa concentração em poucos grupos e a baixa frequência de alguns tipos indicam que resultados por tipo devem ser interpretados como \textit{descritivos}, e comparações por grupo tendem a ser mais estáveis.
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Distribuição de respondentes por ano e turma. Percentuais calculados por ano.}
+\label{tab:ano-turma}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Ano/Turma} & \textbf{n} & \textbf{\% no ano} \\
+\midrule
+2024 -- Turma A & 18 & 48.6\% \\
+2024 -- Turma B & 19 & 51.4\% \\
+\midrule
+2025 -- Turma A & 30 & 46.2\% \\
+2025 -- Turma B & 35 & 53.8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Desempenho por perfis MBTI (RQ2): síntese descritiva e evidência inferencial}
+Para responder à RQ2, analisamos o desempenho nas quatro variáveis centrais: \textit{Requisitos de Arquitetura}, \textit{Desenvolvimento do Sistema}, \textit{Prova (Objetiva e Autoria)} e \textit{Nota Final Geral}. A Tabela~\ref{tab:painel-grupo} sumariza as médias por \textit{grupo} MBTI e a Tabela~\ref{tab:painel-mbti} sumariza as médias por \textit{tipo} (quatro letras). Em nível agregado, \textit{Requisitos} apresenta médias altas e próximas entre grupos, sugerindo baixa variabilidade nesse componente. Em contraste, \textit{Desenvolvimento} apresenta maior amplitude, indicando maior heterogeneidade nesse componente. Para \textit{Prova} e \textit{Nota Final}, as diferenças entre grupos são pequenas; no nível de tipo, observam-se variações pontuais, mas sujeitas à instabilidade quando $n$ é baixo.
+
+Para complementar a síntese descritiva, aplicamos Kruskal--Wallis comparando os quatro grupos do instrumento (Analistas, Diplomatas, Sentinelas e Exploradores) em cada variável de desempenho. Os resultados (Tabela~\ref{tab:kw_resumo}) indicam ausência de diferenças estatisticamente significativas entre grupos para \textit{Requisitos}, \textit{Desenvolvimento}, \textit{Prova} e \textit{Nota Final}. Além disso, os tamanhos de efeito ($\epsilon^2$) foram nulos ou muito pequenos, sugerindo que a pertença ao grupo MBTI explica parcela desprezível da variabilidade observada nas notas. Assim, não foram conduzidas análises pós-hoc.
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Resultados inferenciais (Kruskal--Wallis) por variável de desempenho, comparando grupos de personalidade. Reporta-se $p$-value e tamanho de efeito $\epsilon^2$ (epsilon-squared).}
+\label{tab:kw_resumo}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Variável} & \textbf{Grupos (k)} & \textbf{N} & \textbf{$p$ (KW)} & \textbf{$\epsilon^2$} \\
+\midrule
+Requisitos de Arquitetura & 4 & 102 & 0.250 & 0.011 \\
+Desenvolvimento Sistema & 4 & 102 & 0.769 & 0.000 \\
+PROVA & 4 & 102 & 0.786 & 0.000 \\
+NOTA FINAL GERAL & 4 & 102 & 0.822 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Visão integrada do desempenho por MBTI (apoio à RQ2)}
+As Tabelas~\ref{tab:painel-grupo} e~\ref{tab:painel-mbti} consolidam o desempenho médio por grupo e por tipo, respectivamente. No nível de grupo (Tabela~\ref{tab:painel-grupo}), as médias de \textit{Requisitos} são elevadas e próximas, enquanto \textit{Desenvolvimento} apresenta maior separação, com \textit{Sentinelas} exibindo a maior média. No nível de tipo (Tabela~\ref{tab:painel-mbti}), observa-se variação entre perfis, porém essas diferenças devem ser interpretadas como descritivas, pois alguns tipos possuem baixa frequência na amostra.
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Visão integrada do desempenho por grupo MBTI (médias; 0--10).}
+\label{tab:painel-grupo}
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Grupo} & \textbf{n} & \textbf{Requisitos} & \textbf{Desenv.} & \textbf{Prova} & \textbf{Nota final} \\
+\midrule
+Analistas     & 43 & 9.18 & 7.45 & 8.21 & 8.25 \\
+Diplomatas    & 32 & 9.12 & 7.33 & 8.51 & 8.40 \\
+Sentinelas    & 15 & 9.38 & 8.03 & 8.58 & 8.63 \\
+Exploradores  & 12 & 9.62 & 7.46 & 8.29 & 8.39 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Visão integrada do desempenho por tipo MBTI (4 letras). Valores reportam médias (0--10).}
+\label{tab:painel-mbti}
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{MBTI} & \textbf{n} & \textbf{Requisitos} & \textbf{Desenvolvimento} & \textbf{Prova} & \textbf{Nota final} \\
+\midrule
+ENTJ & 15 & 9.47 & 7.92 & 8.60 & 8.64 \\
+ENTP & 10 & 8.47 & 7.60 & 7.99 & 8.01 \\
+INTJ &  9 & 9.01 & 6.56 & 7.50 & 7.61 \\
+INTP &  9 & 9.63 & 7.39 & 8.53 & 8.52 \\
+ENFJ & 10 & 9.25 & 7.55 & 8.43 & 8.42 \\
+ENFP &  8 & 8.90 & 7.25 & 8.54 & 8.36 \\
+INFP &  8 & 8.87 & 6.81 & 8.65 & 8.33 \\
+INFJ &  6 & 9.51 & 7.75 & 8.42 & 8.50 \\
+ESTJ &  7 & 9.21 & 8.14 & 8.57 & 8.61 \\
+ISTJ &  6 & 9.51 & 7.83 & 9.35 & 9.08 \\
+ESFJ &  1 & 9.25 & 8.00 & 6.30 & 7.23 \\
+ISFJ &  1 & 10.00 & 8.50 & 6.25 & 7.45 \\
+ISFP &  6 & 9.42 & 6.83 & 8.16 & 8.15 \\
+ESTP &  3 & 9.80 & 8.17 & 8.45 & 8.66 \\
+ISTP &  3 & 9.85 & 8.00 & 8.38 & 8.60 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Análises descritivas por Grupo e por MBTI}
+\label{subsec:desc-grupo-mbti}
+
+Para responder à RQ2 com uma visão detalhada do desempenho, calculamos estatística descritiva
+($n$, média, desvio padrão, mediana, mínimo, quartis $q1$ e $q3$, e máximo) para quatro variáveis centrais:
+\textit{Média Requisitos de Arquitetura}, \textit{Desenvolvimento Sistema},
+\textit{PROVA OBJETIVA E AUTORIA} e \textit{NOTA FINAL GERAL ( TDE 40\% + PROVA 60\%)}.
+As estatísticas foram reportadas em dois níveis de granularidade: (i) agregação por \textbf{Grupo}
+(\textit{Analistas}, \textit{Diplomatas}, \textit{Sentinelas} e \textit{Exploradores}) e (ii) agregação por \textbf{MBTI} (tipo de quatro letras, conforme autorrelato na plataforma utilizada).
+
+Desempenho por Grupo: No nível de Grupo, observa-se que \textit{Média Requisitos de Arquitetura} apresenta valores elevados e concentrados,
+com medianas próximas de 10 em todos os grupos (Tabela~\ref{tab:desc-grupo-media-requisitos-de-arquitetura}). Essa concentração é acompanhada por quartis superiores ($q3$) no teto (10.0) para todos os grupos, indicando baixa dispersão na parte superior da distribuição e sugerindo possível efeito de teto neste componente.
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Estatística descritiva de Média Requisitos de Arquitetura por Grupo.}
+\label{tab:desc-grupo-media-requisitos-de-arquitetura}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Grupo & n & mean & std & median & min & q1 & q3 & max \\
+\midrule
+Analistas & 43 & 9.18 & 1.21 & 9.55 & 5.00 & 8.82 & 10.00 & 10.00 \\
+Diplomatas & 32 & 9.12 & 1.13 & 9.40 & 5.00 & 9.10 & 10.00 & 10.00 \\
+Sentinelas & 15 & 9.38 & 0.84 & 10.00 & 7.50 & 8.68 & 10.00 & 10.00 \\
+Exploradores & 12 & 9.62 & 0.79 & 10.00 & 7.25 & 9.51 & 10.00 & 10.00 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+Em contraste, \textit{Desenvolvimento Sistema} exibe maior dispersão e maior amplitude, com diferenças visíveis entre mínimo,
+quartis e máximos (Tabela~\ref{tab:desc-grupo-desenvolvimento-sistema}). Em particular, há ocorrência de valores mínimos iguais a 0
+em alguns grupos, enquanto os máximos permanecem em 10, o que reforça maior heterogeneidade nesse componente ao longo do semestre.
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Estatística descritiva de Desenvolvimento Sistema por Grupo.}
+\label{tab:desc-grupo-desenvolvimento-sistema}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Grupo & n & mean & std & median & min & q1 & q3 & max \\
+\midrule
+Analistas & 43 & 7.45 & 2.52 & 8.00 & 0.00 & 6.00 & 10.00 & 10.00 \\
+Diplomatas & 32 & 7.33 & 2.04 & 7.75 & 4.00 & 5.50 & 9.12 & 10.00 \\
+Sentinelas & 15 & 8.03 & 1.54 & 8.00 & 4.00 & 7.00 & 9.50 & 10.00 \\
+Exploradores & 12 & 7.46 & 3.22 & 9.25 & 0.00 & 5.00 & 9.62 & 10.00 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+Para \textit{PROVA OBJETIVA E AUTORIA}, as médias por Grupo situam-se em patamar alto e relativamente próximo,
+com medianas em torno de 8.35--9.00 e dispersões moderadas (Tabela~\ref{tab:desc-grupo-prova-objetiva-e-autoria}).
+Finalmente, a \textit{NOTA FINAL} apresenta médias próximas entre grupos, refletindo a agregação ponderada dos componentes
+e um efeito de suavização de diferenças pontuais (Tabela~\ref{tab:desc-grupo-nota_final}).
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Estatística descritiva de NOTA_FINAL por grupo.}
+\label{tab:desc-grupo-nota_final}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Grupo & n & mean & std & median & min & q1 & q3 & max \\
+\midrule
+Analistas & 43 & 8.25 & 1.49 & 8.33 & 1.80 & 7.59 & 9.36 & 10.00 \\
+Diplomatas & 32 & 8.40 & 0.89 & 8.41 & 6.88 & 7.59 & 9.23 & 9.90 \\
+Sentinelas & 15 & 8.63 & 1.21 & 8.71 & 6.52 & 7.38 & 9.80 & 9.90 \\
+Exploradores & 12 & 8.39 & 1.48 & 8.91 & 5.08 & 7.36 & 9.50 & 9.90 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Desempenho por MBTI: No nível de MBTI, as estatísticas detalham variações entre tipos, porém com diferentes tamanhos amostrais por categoria. Ainda assim, observa-se novamente um padrão de notas elevadas em \textit{Média Requisitos de Arquitetura}, com medianas altas e quartis superiores frequentemente próximos do teto (Tabela~\ref{tab:desc-mbti-media-requisitos-de-arquitetura}).
+Para \textit{Desenvolvimento Sistema}, a amplitude é maior e há tipos com mínimos iguais a 0, bem como desvios padrão elevados em alguns perfis, indicando maior variabilidade intratipo (Tabela~\ref{tab:desc-mbti-desenvolvimento-sistema}).
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Estatística descritiva de Média Requisitos de Arquitetura por MBTI.}
+\label{tab:desc-mbti-media-requisitos-de-arquitetura}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+MBTI & n & mean & std & median & min & q1 & q3 & max \\
+\midrule
+ENTJ & 15 & 9.47 & 0.61 & 9.55 & 8.00 & 9.25 & 10.00 & 10.00 \\
+ENFJ & 10 & 9.25 & 0.70 & 9.30 & 7.50 & 9.10 & 9.55 & 10.00 \\
+ENTP & 10 & 8.47 & 1.65 & 8.82 & 5.00 & 7.38 & 9.94 & 10.00 \\
+INTJ & 9 & 9.01 & 1.64 & 10.00 & 5.00 & 8.65 & 10.00 & 10.00 \\
+INTP & 9 & 9.63 & 0.52 & 10.00 & 8.50 & 9.40 & 10.00 & 10.00 \\
+ENFP & 8 & 8.90 & 1.35 & 9.40 & 6.50 & 8.30 & 10.00 & 10.00 \\
+INFP & 8 & 8.87 & 1.68 & 9.48 & 5.00 & 8.50 & 10.00 & 10.00 \\
+ESTJ & 7 & 9.21 & 1.05 & 10.00 & 7.50 & 8.48 & 10.00 & 10.00 \\
+ISTJ & 6 & 9.51 & 0.73 & 9.95 & 8.50 & 8.96 & 10.00 & 10.00 \\
+ISFP & 6 & 9.42 & 1.10 & 10.00 & 7.25 & 9.48 & 10.00 & 10.00 \\
+INFJ & 6 & 9.51 & 0.42 & 9.43 & 9.10 & 9.15 & 9.89 & 10.00 \\
+ISTP & 3 & 9.85 & 0.26 & 10.00 & 9.55 & 9.78 & 10.00 & 10.00 \\
+ESTP & 3 & 9.80 & 0.35 & 10.00 & 9.40 & 9.70 & 10.00 & 10.00 \\
+ESFJ & 1 & 9.25 & NaN & 9.25 & 9.25 & 9.25 & 9.25 & 9.25 \\
+ISFJ & 1 & 10.00 & NaN & 10.00 & 10.00 & 10.00 & 10.00 & 10.00 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Estatística descritiva de Desenvolvimento Sistema por MBTI.}
+\label{tab:desc-mbti-desenvolvimento-sistema}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+MBTI & n & mean & std & median & min & q1 & q3 & max \\
+\midrule
+ENTJ & 15 & 7.92 & 2.15 & 8.00 & 3.00 & 7.50 & 9.50 & 10.00 \\
+ENFJ & 10 & 7.55 & 2.06 & 8.00 & 4.00 & 6.25 & 9.12 & 10.00 \\
+ENTP & 10 & 7.60 & 2.45 & 8.00 & 4.00 & 5.62 & 9.88 & 10.00 \\
+INTJ & 9 & 6.56 & 3.64 & 6.00 & 0.00 & 4.00 & 10.00 & 10.00 \\
+INTP & 9 & 7.39 & 2.00 & 7.00 & 3.00 & 7.00 & 8.00 & 10.00 \\
+ENFP & 8 & 7.25 & 2.04 & 7.25 & 4.00 & 6.50 & 8.38 & 10.00 \\
+INFP & 8 & 6.81 & 2.12 & 6.25 & 4.00 & 5.38 & 9.00 & 9.50 \\
+ESTJ & 7 & 8.14 & 1.03 & 8.00 & 7.00 & 7.50 & 8.75 & 9.50 \\
+ISTJ & 6 & 7.83 & 2.29 & 8.25 & 4.00 & 7.00 & 9.50 & 10.00 \\
+ISFP & 6 & 6.83 & 3.75 & 8.50 & 0.00 & 5.75 & 9.38 & 9.50 \\
+INFJ & 6 & 7.75 & 2.32 & 8.50 & 4.00 & 6.50 & 9.38 & 10.00 \\
+ISTP & 3 & 8.00 & 3.46 & 10.00 & 4.00 & 7.00 & 10.00 & 10.00 \\
+ESTP & 3 & 8.17 & 2.75 & 9.50 & 5.00 & 7.25 & 9.75 & 10.00 \\
+ESFJ & 1 & 8.00 & NaN & 8.00 & 8.00 & 8.00 & 8.00 & 8.00 \\
+ISFJ & 1 & 8.50 & NaN & 8.50 & 8.50 & 8.50 & 8.50 & 8.50 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+Em \textit{PROVA OBJETIVA E AUTORIA}, os valores típicos permanecem altos, mas há casos com maior dispersão e presença de valores mínimos
+baixos em alguns tipos, sugerindo heterogeneidade adicional nesse componente (Tabela~\ref{tab:desc-mbti-prova-objetiva-e-autoria}).
+Por fim, na \textit{NOTA FINAL}, as diferenças entre tipos tendem a ser menos pronunciadas do que em componentes específicos,
+coerente com o caráter agregado do desfecho (Tabela~\ref{tab:desc-mbti-nota_final}).
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Estatística descritiva de PROVA OBJETIVA E AUTORIA por MBTI.}
+\label{tab:desc-mbti-prova-objetiva-e-autoria}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+MBTI & n & mean & std & median & min & q1 & q3 & max \\
+\midrule
+ENTJ & 15 & 8.60 & 1.08 & 8.81 & 6.40 & 7.72 & 9.43 & 10.00 \\
+ENFJ & 10 & 8.43 & 0.97 & 8.43 & 7.00 & 7.81 & 8.62 & 10.00 \\
+ENTP & 10 & 7.99 & 1.51 & 7.80 & 5.58 & 7.01 & 9.21 & 10.00 \\
+INTJ & 9 & 7.50 & 3.05 & 8.08 & 0.00 & 7.14 & 9.25 & 10.00 \\
+INTP & 9 & 8.53 & 0.93 & 8.80 & 7.00 & 7.65 & 9.25 & 9.70 \\
+ENFP & 8 & 8.54 & 1.34 & 8.74 & 6.51 & 7.72 & 9.70 & 10.00 \\
+INFP & 8 & 8.65 & 0.91 & 8.76 & 7.45 & 8.08 & 9.15 & 10.00 \\
+ESTJ & 7 & 8.57 & 1.80 & 8.85 & 5.30 & 7.92 & 10.00 & 10.00 \\
+ISTJ & 6 & 9.35 & 0.93 & 9.75 & 7.63 & 9.12 & 10.00 & 10.00 \\
+ISFP & 6 & 8.16 & 1.82 & 8.15 & 5.14 & 7.58 & 9.64 & 10.00 \\
+INFJ & 6 & 8.42 & 0.97 & 8.46 & 7.38 & 7.59 & 9.25 & 9.40 \\
+ISTP & 3 & 8.38 & 0.78 & 8.14 & 7.75 & 7.94 & 8.70 & 9.26 \\
+ESTP & 3 & 8.45 & 1.27 & 9.00 & 7.00 & 8.00 & 9.18 & 9.35 \\
+ESFJ & 1 & 6.30 & NaN & 6.30 & 6.30 & 6.30 & 6.30 & 6.30 \\
+ISFJ & 1 & 6.25 & NaN & 6.25 & 6.25 & 6.25 & 6.25 & 6.25 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!t]
+\centering
+\small
+\caption{Estatística descritiva de NOTA_FINAL por MBTI.}
+\label{tab:desc-mbti-nota_final}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+MBTI & n & mean & std & median & min & q1 & q3 & max \\
+\midrule
+ENTJ & 15 & 8.64 & 0.88 & 8.85 & 7.04 & 8.08 & 9.26 & 9.95 \\
+ENFJ & 10 & 8.42 & 0.87 & 8.53 & 7.16 & 7.68 & 9.01 & 9.90 \\
+ENTP & 10 & 8.01 & 1.34 & 8.03 & 6.30 & 6.81 & 9.22 & 10.00 \\
+INTJ & 9 & 7.61 & 2.59 & 7.58 & 1.80 & 6.87 & 9.55 & 10.00 \\
+INTP & 9 & 8.52 & 0.76 & 8.55 & 7.60 & 7.76 & 9.22 & 9.45 \\
+ENFP & 8 & 8.36 & 1.04 & 8.30 & 6.88 & 7.55 & 9.29 & 9.72 \\
+INFP & 8 & 8.33 & 0.91 & 8.12 & 7.27 & 7.67 & 9.23 & 9.57 \\
+ESTJ & 7 & 8.61 & 1.28 & 8.71 & 6.52 & 8.01 & 9.57 & 9.90 \\
+ISTJ & 6 & 9.08 & 1.10 & 9.54 & 7.11 & 8.72 & 9.85 & 9.90 \\
+ISFP & 6 & 8.15 & 1.86 & 8.45 & 5.08 & 7.32 & 9.66 & 9.90 \\
+INFJ & 6 & 8.50 & 0.92 & 8.48 & 7.16 & 7.99 & 9.25 & 9.55 \\
+ISTP & 3 & 8.60 & 1.04 & 8.88 & 7.45 & 8.17 & 9.18 & 9.47 \\
+ESTP & 3 & 8.66 & 1.38 & 9.30 & 7.08 & 8.19 & 9.46 & 9.61 \\
+ESFJ & 1 & 7.23 & NaN & 7.23 & 7.23 & 7.23 & 7.23 & 7.23 \\
+ISFJ & 1 & 7.45 & NaN & 7.45 & 7.45 & 7.45 & 7.45 & 7.45 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+Em síntese, as análises descritivas sugerem que \textit{Requisitos} é o componente com maior concentração de notas no topo,
+enquanto \textit{Desenvolvimento Sistema} é o componente com maior dispersão e amplitude. A \textit{PROVA} apresenta comportamento intermediário,
+e a \textit{NOTA FINAL} tende a reduzir diferenças pontuais por combinar os componentes via ponderação. As implicações desses padrões
+são discutidas na Seção~\ref{sec:discussion}.
+\section{Discussão}
+\label{sec:discussion}
+
+Os resultados deste estudo sugerem que, no contexto analisado, a tipologia de personalidade (MBTI via 16Personalities), especialmente no nível de \textit{grupos} (Analistas, Diplomatas, Sentinelas e Exploradores), não se associa de forma relevante ao desempenho acadêmico medido por notas. Essa interpretação é sustentada pelo teste de Kruskal--Wallis, que não indicou diferenças estatisticamente significativas entre grupos em \textit{Requisitos de Arquitetura}, \textit{Desenvolvimento do Sistema}, \textit{Prova} e \textit{Nota Final} (Tabela~\ref{tab:kw_resumo}), com tamanhos de efeito ($\epsilon^2$) nulos ou muito pequenos. Assim, dentro desta amostra e do desenho avaliativo adotado, a pertença a um grupo de personalidade explica parcela desprezível da variabilidade das notas, fornecendo evidência inicial de que ``MBTI importa pouco'' para o desempenho global na disciplina.
+
+Ao mesmo tempo, as análises descritivas ajudam a entender \emph{por que} diferenças robustas não emergem. Primeiro, observa-se forte concentração de notas em \textit{Média Requisitos de Arquitetura}, com medianas próximas de 10 e quartis superiores no teto em todos os grupos (Tabela~\ref{tab:desc-grupo-media-requisitos-de-arquitetura}) e também na maioria dos tipos MBTI (Tabela~\ref{tab:desc-mbti-media-requisitos-de-arquitetura}). Esse padrão é compatível com \textbf{efeito de teto}, reduzindo o poder discriminativo do componente e, consequentemente, a capacidade de detectar diferenças entre perfis. Em termos pedagógicos, tal efeito pode refletir \textit{scaffolding} forte (templates, exemplos, rubricas claras e iterações de feedback) e/ou critérios de correção que privilegiam completude em detrimento de profundidade analítica (por exemplo, justificativas de \textit{trade-offs} e consequências arquiteturais).
+
+Segundo, \textit{Desenvolvimento do Sistema} apresenta maior dispersão e amplitude, incluindo mínimos iguais a 0 em alguns grupos (Tabela~\ref{tab:desc-grupo-desenvolvimento-sistema}) e maior heterogeneidade entre tipos (Tabela~\ref{tab:desc-mbti-desenvolvimento-sistema}). Esse comportamento é coerente com um componente mais sensível a fatores contextuais como execução técnica contínua, integração de componentes, depuração, gestão de tempo e coordenação em equipe. Ainda assim, apesar de médias ligeiramente distintas em alguns grupos (Tabela~\ref{tab:painel-grupo}), a variação intragrupo e a sobreposição observada (capturada pelos quartis e desvios padrão) parecem dominar as diferenças entre grupos, o que ajuda a explicar o resultado não significativo no teste global.
+
+Terceiro, \textit{PROVA OBJETIVA E AUTORIA} e \textit{NOTA FINAL} mostram médias relativamente próximas entre grupos (Tabela~\ref{tab:painel-grupo}) e dispersões moderadas no agregado (Tabelas~\ref{tab:desc-grupo-prova-objetiva-e-autoria} e~\ref{tab:desc-grupo-nota_final}). A \textit{Nota Final}, por ser um desfecho composto (TDE 40\% + Prova 60\%), tende a \textbf{suavizar} diferenças pontuais que possam aparecer em um componente específico, principalmente quando (i) um componente apresenta efeito de teto (\textit{Requisitos}) e (ii) outro componente tem maior variabilidade (\textit{Desenvolvimento}), mas com forte sobreposição entre grupos.
+
+No nível de \textit{tipo} MBTI, a visão integrada (Tabela~\ref{tab:painel-mbti}) sugere variações descritivas (por exemplo, diferenças de médias em \textit{Desenvolvimento}, \textit{Prova} e \textit{Nota Final}). Entretanto, essas variações devem ser interpretadas com cautela: há esparsidade em diversos tipos, incluindo categorias com $n=1$, para as quais medidas como desvio padrão não são informativas e estimativas de média são instáveis. Assim, a principal contribuição do recorte por tipo neste artigo é \textbf{exploratória} e serve para gerar hipóteses, não para conclusões confirmatórias.
+
+Do ponto de vista de desenho instrucional, os resultados indicam implicações práticas mais ligadas a \textbf{avaliação e acompanhamento} do que a intervenções orientadas por personalidade. Para o componente de \textit{Requisitos}, recomenda-se revisar rubricas para aumentar discriminação e reduzir efeito de teto, por exemplo: (i) exigir alternativas arquiteturais explícitas; (ii) solicitar justificativas com \textit{trade-offs} e impactos em atributos de qualidade; (iii) incluir critérios de completude \emph{e} profundidade (racional, riscos, consequências e rastreabilidade com requisitos). Para \textit{Desenvolvimento}, que mostrou maior dispersão, recomenda-se reforçar checkpoints e mecanismos de diagnóstico precoce (por exemplo, marcos intermediários com evidências mínimas de integração e observabilidade), além de intervenções de suporte direcionadas a equipes/estudantes com sinais de atraso.
+
+Em síntese, a leitura integrada das evidências (testes, tamanhos de efeito e estatísticas descritivas) sugere que, neste contexto, a personalidade não se apresenta como fator explicativo central do desempenho. Em contrapartida, características do desenho avaliativo (efeito de teto em \textit{Requisitos}), a natureza do trabalho em equipe e variáveis contextuais não observadas (experiência prévia, carga de trabalho externa, dinâmica de equipe e uso de IA) provavelmente exercem maior influência sobre a variabilidade das notas.
+
+
+\section{Ameaças à Validade}
+\label{sec:threats}
+
+Discutimos ameaças à validade segundo quatro perspectivas: construto, interna, externa e conclusão.
+
+\paragraph{Validade de construto.}
+A variável de personalidade foi medida por \textbf{autorrelato} usando a plataforma \textit{16Personalities}, que é inspirada no MBTI, mas \textbf{não} corresponde ao instrumento oficial nem garante equivalência psicométrica às escalas originais. Assim, existe risco de \textit{misclassification} (classificação incorreta) e de instabilidade temporal do tipo reportado (mudança do resultado em diferentes momentos), o que pode atenuar associações reais. Além disso, a agregação em \textit{roles} (Analistas/Diplomatas/Sentinelas/Exploradores) é uma operacionalização específica do instrumento e não uma taxonomia canônica do MBTI; por isso, os resultados por grupos devem ser interpretados como \textbf{operacionais} e exploratórios. Quanto ao desfecho, desempenho foi operacionalizado por notas de componentes avaliativos (TDEs, prova e nota final), que refletem competência avaliada \emph{na disciplina} e não necessariamente aprendizagem de longo prazo, retenção, autoeficácia, ou transferência para contextos profissionais. Há ainda evidência de \textbf{efeito de teto} em \textit{Requisitos de Arquitetura} (medianas e $q3$ próximos de 10 em todos os grupos), reduzindo variância e poder de discriminação, o que dificulta detectar diferenças entre perfis. Como mitigação, analisamos múltiplos desfechos (Requisitos, Desenvolvimento, Prova e Nota Final), reportamos estatísticas robustas (mediana e quartis) e priorizamos agregações (grupos/dimensões) para reduzir esparsidade por tipo.
+
+\paragraph{Validade interna.}
+O estudo é \textbf{observacional} e não permite inferir causalidade entre personalidade e desempenho. Variáveis de confusão não mensuradas podem explicar a variabilidade das notas: experiência prévia em desenvolvimento e cloud, proficiência em programação, carga de trabalho externa, motivação, acesso a suporte, e participação efetiva nas equipes. A disciplina utiliza PjBL e entregas em \textbf{trabalho em equipe}; assim, a nota do estudante pode refletir efeitos de composição do grupo (liderança, divisão de tarefas, coordenação) e não somente características individuais. O uso permitido de \textbf{IA generativa} no desenvolvimento também pode reduzir a ligação direta entre traços individuais e desempenho em entregas práticas, variando conforme intensidade e qualidade do uso por equipe/estudante. Além disso, diferenças entre \textbf{anos e turmas} (coortes) podem introduzir variação instrucional e operacional (p.ex., ajustes de rubrica, nível de cobrança, contexto de oferta) que se mistura à relação personalidade--nota. Como mitigação, descrevemos a amostra por ano/turma, removemos duplicatas do formulário e discutimos a necessidade de, em trabalhos futuros, coletar variáveis adicionais (experiência prévia, papel na equipe, autoavaliação de contribuição, intensidade de uso de IA) e empregar análises estratificadas ou modelos com controle por coorte.
+
+\paragraph{Validade externa.}
+Os resultados derivam de uma \textbf{única instituição} e de uma disciplina com desenho específico (PjBL, stack cloud-native, ferramentas e rubricas particulares), limitando a generalização para outros cursos de Arquitetura de Software, outros níveis (p.ex., pós-graduação), ou formatos de avaliação distintos. A distribuição de perfis é \textbf{desequilibrada} (predomínio de Analistas/Diplomatas) e há tipos raros com $n$ muito pequeno, o que restringe extrapolações sobre a população de estudantes. Também há risco de \textbf{viés de resposta/seleção}: apenas estudantes que preencheram o formulário e informaram seu perfil foram incluídos, e esses respondentes podem diferir sistematicamente dos não respondentes (p.ex., maior engajamento). Como mitigação, tratamos resultados por tipo como descritivos quando há baixa frequência e enfatizamos replicação em novas ofertas, disciplinas e instituições.
+
+\paragraph{Validade de conclusão.}
+Apesar de $N=102$ ser suficiente para descrições globais, a \textbf{esparsidade por tipo} (incluindo categorias com $n=1$) reduz poder estatístico e torna estimativas instáveis, aumentando sensibilidade a outliers e ampliando incerteza das médias. O efeito de teto em \textit{Requisitos} reduz variância e enfraquece a capacidade de detectar diferenças, mesmo se existirem. Adicionalmente, múltiplas comparações (vários desfechos e diferentes granularidades do MBTI) aumentam risco de conclusões espúrias; por isso, priorizamos testes não paramétricos no nível de grupos e reportamos \textbf{tamanho de efeito} ($\epsilon^2$), interpretando resultados nulos à luz de efeitos pequenos e de limitações de poder. Em estudos futuros, recomenda-se reportar intervalos de confiança, aplicar correções quando houver pós-testes e usar modelos que incorporem coorte e covariáveis, além de análises por dimensões (E/I, S/N, T/F, J/P) para reduzir esparsidade.
+
+Em síntese, estas ameaças sugerem interpretar os achados como evidência inicial no contexto estudado: não observamos diferenças relevantes por grupos de personalidade nas notas, mas o desenho observacional, o instrumento de personalidade, a esparsidade por tipo e características do esquema de avaliação (incluindo efeito de teto) limitam inferências e reforçam a necessidade de replicação e de variáveis adicionais de controle.
+
+
+\section{Conclusão}
+\label{sec:conclusion}
+
+Este trabalho investigou a relação entre perfis de personalidade (MBTI via 16Personalities) e desempenho acadêmico em uma disciplina de Arquitetura de Software conduzida com PjBL, analisando um dataset com 102 estudantes e quatro medidas de desempenho: \textit{Média Requisitos de Arquitetura}, \textit{Desenvolvimento do Sistema}, \textit{PROVA OBJETIVA E AUTORIA} e \textit{NOTA FINAL GERAL (TDE 40\% + Prova 60\%)}.
+
+Em resposta à \textbf{RQ1}, observou-se distribuição assimétrica de perfis, com predominância dos grupos \textit{Analistas} e \textit{Diplomatas} e baixa frequência de diversos tipos, o que reforça a utilidade de agregações (por grupo/dimensões) para reduzir esparsidade. Em resposta à \textbf{RQ2}, as análises inferenciais no nível de grupos não identificaram diferenças estatisticamente significativas entre grupos de personalidade para nenhuma variável de desempenho, com tamanhos de efeito nulos ou muito pequenos (Tabela~\ref{tab:kw_resumo}). Assim, no contexto analisado, não há evidência de que MBTI (no nível de grupos) seja um fator relevante para explicar o desempenho acadêmico medido por notas.
+
+As análises descritivas ajudam a interpretar esse resultado: \textit{Requisitos de Arquitetura} mostrou forte concentração de notas no teto (efeito de teto), reduzindo discriminação; \textit{Desenvolvimento do Sistema} apresentou a maior variabilidade e amplitude, sugerindo maior sensibilidade a fatores contextuais; e a \textit{Nota Final} tende a suavizar diferenças por ser um desfecho composto. Como implicações pedagógicas, recomenda-se (i) revisar rubricas e critérios do componente de \textit{Requisitos} para elevar poder discriminativo (alternativas, \textit{trade-offs}, consequências e rastreabilidade) e (ii) usar \textit{Desenvolvimento} como componente de diagnóstico precoce, com checkpoints e suporte direcionado.
+
+Como trabalhos futuros, propomos (a) replicar o estudo em novas ofertas e/ou em outras disciplinas de Arquitetura de Software; (b) incluir variáveis adicionais (experiência prévia, carga de trabalho, dinâmica de equipe e intensidade de uso de IA); e (c) complementar a análise com modelos que controlem ano/turma/gênero e com abordagens por dimensões do MBTI (E/I, S/N, T/F, J/P), reduzindo esparsidade e permitindo conclusões mais robustas.
+
+\section{Aspectos Éticos e Ciência Aberta}
+A participação foi voluntária, e o dataset foi curado por meio de anonimização e remoção de identificadores diretos (por exemplo, nome e sobrenome) antes de qualquer análise. Como o estudo foi conduzido no contexto de uma disciplina regular, sem intervenção experimental, sem coleta de dados sensíveis e com baixo risco, caracterizou-se como avaliação educacional de rotina acadêmica, não exigindo submissão ao Comitê de Ética em Pesquisa. Os resultados foram reportados apenas de forma agregada, com cuidado para evitar identificação indireta em subgrupos pequenos, dada a inclusão de informações pessoais como gênero e perfil de personalidade. 
+
+\section*{Disponibilidade de Artefatos}
+Dados anonimizados e scripts de análise serão disponibilizados em repositório público após a aceitação, conforme as diretrizes do evento.
+
+\section*{Acknowledgments}
+Removed for blind review
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{REF}
+
+\end{document}
