@@ -32,10 +32,10 @@ This repository contains research materials investigating the relationship betwe
 ## MBTI Groups
 
 Students are classified into four personality groups:
-- **Analistas (Analysts)**: Strategic thinkers, innovative problem-solvers
-- **Diplomatas (Diplomats)**: Collaborative, people-focused
-- **Exploradores (Explorers)**: Practical, action-oriented
-- **Sentinelas (Sentinels)**: Organized, detail-oriented
+- **Analysts**: Strategic thinkers, innovative problem-solvers
+- **Diplomats**: Collaborative, people-focused
+- **Explorers**: Practical, action-oriented
+- **Sentinels**: Organized, detail-oriented
 
 ## Files
 
