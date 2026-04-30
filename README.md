@@ -21,7 +21,7 @@ Does personality (MBTI) matter in Software Architecture education and performanc
 
 ## Files
 - `SBES_MTBI_SA.ipynb` - Analysis script (Google Colab compatible)
-- `dados.xlsx` - Raw dataset
+- `data.csv` - Raw dataset
 - `data.md` - Formatted dataset table
 - `main.tex` - Academic paper (SBES 2026 submission)
 
